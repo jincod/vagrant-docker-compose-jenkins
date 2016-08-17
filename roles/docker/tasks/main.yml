@@ -61,3 +61,10 @@
   register: initialAdminPassword
 
 - debug: msg="initialAdminPassword {{ initialAdminPassword.stdout }}"
+
+- name: Schedule backup
+  cron:
+    name: "backup"
+    minute: "0"
+    hour: "0"
+    job: "sudo docker run --rm --volumes-from jenkins-data-container -v $(pwd):/backup jenkins:latest tar cvf /backup/backup.tar /var/jenkins_home"
