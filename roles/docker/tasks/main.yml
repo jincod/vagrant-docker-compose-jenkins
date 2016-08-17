@@ -1,13 +1,9 @@
 ---
-- group: name=docker state=present
-
-- user: name=jenkins group=docker # uid=1000
-
 - name: Creates directory
-  file: path=/var/jenkins_home state=directory owner=jenkins
+  file: path=/var/jenkins state=directory
 
 - name: Copy configs 
-  copy: src="{{item}}" dest="/var/jenkins_home/{{item}}"
+  copy: src="{{item}}" dest="/var/jenkins/{{item}}"
   with_items:
     - docker-compose.yml
 
@@ -57,4 +53,11 @@
 - name: "docker-compose up"
   command: "docker-compose up -d"
   args:
-    chdir: /var/jenkins_home
+    chdir: /var/jenkins
+
+- pause: seconds=60
+
+- shell: docker run --rm --volumes-from jenkins-data-container jenkins:latest cat /var/jenkins_home/secrets/initialAdminPassword
+  register: initialAdminPassword
+
+- debug: msg="initialAdminPassword {{ initialAdminPassword.stdout }}"
