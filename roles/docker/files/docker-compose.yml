@@ -1,0 +1,12 @@
+---
+version: '2'
+
+services:
+  web:
+    image: jenkins:latest
+    restart: always
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - /var/jenkins_home:/var/jenkins_home
