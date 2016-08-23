@@ -18,6 +18,12 @@
     - apparmor
     - python-dev
     - python-pip
+    - postfix
+
+- name: Start postfix
+  service:
+    name: postfix
+    state: started
     
 - name: Upgrade latest pip, setuptools, docker-py and docker-compose with pip
   pip:
@@ -49,6 +55,13 @@
   service:
     name: docker
     state: started
+
+- shell: "docker network ls | grep proxy-network"
+  register: isCreatedNetwork
+
+- name: "docker network create"
+  command: "docker network create proxy-network"
+  when: not isCreatedNetwork
 
 - name: "docker-compose up"
   command: "docker-compose up -d"

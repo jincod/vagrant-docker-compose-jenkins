@@ -11,9 +11,14 @@ services:
     command: 'true'
   web:
     image: jenkins:latest
+    container_name: jenkins-web
     restart: always
     ports:
       - "8080:8080"
       - "50000:50000"
     volumes_from:
       - jenkins-data
+networks:
+  default:
+    external:
+      name: proxy-network
