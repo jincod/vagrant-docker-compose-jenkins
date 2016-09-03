@@ -2,6 +2,9 @@
 - name: Creates directory
   file: path=/var/jenkins state=directory
 
+- name: Creates backup directory
+  file: path=/var/backups/jenkins state=directory
+
 - name: Copy configs 
   copy: src="{{item}}" dest="/var/jenkins/{{item}}"
   with_items:
@@ -58,10 +61,11 @@
 
 - shell: "docker network ls | grep proxy-network"
   register: isCreatedNetwork
+  ignore_errors: yes
 
 - name: "docker network create"
   command: "docker network create proxy-network"
-  when: not isCreatedNetwork
+  when: isCreatedNetwork is not defined
 
 - name: "docker-compose up"
   command: "docker-compose up -d"
@@ -80,4 +84,4 @@
     name: "backup"
     minute: "0"
     hour: "0"
-    job: "sudo docker run --rm --volumes-from jenkins-data-container -v $(pwd):/backup jenkins:latest tar cvf /backup/backup.tar /var/jenkins_home"
+    job: "sudo docker run --rm --volumes-from jenkins-data-container -v /var/backups/jenkins:/backup ubuntu tar cvzf /backup/backup_$(date +\%Y-\%m-\%d-\%H\%M\%S).tar /var/jenkins_home >> /var/log/jenkins-backup.log 2>&1"
