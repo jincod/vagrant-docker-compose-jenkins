@@ -75,7 +75,7 @@
 
 - pause: seconds=60
 
-- shell: docker run --rm --volumes-from jenkins-data jenkins cat /var/jenkins_home/secrets/initialAdminPassword
+- shell: docker run --rm --volume jenkins_jenkins-data:/jenkins_data jenkins cat /jenkins_data/secrets/initialAdminPassword
   register: initialAdminPassword
 
 - debug: msg="initialAdminPassword {{ initialAdminPassword.stdout }}"
@@ -85,4 +85,4 @@
     name: "backup"
     minute: "0"
     hour: "0"
-    job: "sudo docker run --rm --volumes-from jenkins-data -v /var/backups/jenkins:/backup jenkins tar cvzf /backup/backup_{{ lookup('pipe', 'date +%Y-%m-%d-%H%M%S') }}.tar /var/jenkins_home >> /var/log/jenkins-backup.log 2>&1"
+    job: "sudo docker run --rm --volume jenkins_jenkins-data:/jenkins_data --volume /var/backups/jenkins:/backup jenkins tar cvzf /backup/{{lookup('pipe', 'date +%Y-%m-%d-%H%M%S')}}.tar /jenkins_data >> /var/log/jenkins-backup.log 2>&1"
