@@ -35,7 +35,6 @@
   with_items:
     - pip
     - setuptools
-    - docker-py
     - docker-compose
 
 - name: Add docker apt repo
@@ -85,4 +84,4 @@
     name: "backup"
     minute: "0"
     hour: "0"
-    job: "sudo docker run --rm --volume jenkins_jenkins-data:/jenkins_data --volume /var/backups/jenkins:/backup jenkins tar cvzf /backup/{{lookup('pipe', 'date +%Y-%m-%d-%H%M%S')}}.tar /jenkins_data >> /var/log/jenkins-backup.log 2>&1"
+    job: "sudo docker run --rm --volume jenkins_jenkins-data:/jenkins_data --volume /var/backups/jenkins:/backup ubuntu tar cvzf /backup/{{lookup('pipe', 'date +%Y-%m-%d-%H%M%S')}}.tar /jenkins_data >> /var/log/jenkins-backup.log 2>&1"
