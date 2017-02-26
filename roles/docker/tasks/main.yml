@@ -64,7 +64,7 @@
 
 - name: "docker network create"
   command: "docker network create proxy-network"
-  when: isCreatedNetwork.stdout == ""
+  when: isCreatedNetwork is defined and isCreatedNetwork.stdout == ""
 
 
 - name: "docker-compose up"
@@ -77,11 +77,13 @@
 - shell: docker run --rm --volume jenkins_jenkins-data:/jenkins_data jenkins cat /jenkins_data/secrets/initialAdminPassword
   register: initialAdminPassword
 
-- debug: msg="initialAdminPassword {{ initialAdminPassword.stdout }}"
+- debug:
+    msg: "initialAdminPassword {{ initialAdminPassword.stdout }}"
+  when: initialAdminPassword is defined and initialAdminPassword.stdout is defined
 
 - name: Schedule backup
   cron:
     name: "backup"
     minute: "0"
     hour: "0"
-    job: "sudo docker run --rm --volume jenkins_jenkins-data:/jenkins_data --volume /var/backups/jenkins:/backup ubuntu tar cvzf /backup/{{lookup('pipe', 'date +%Y-%m-%d-%H%M%S')}}.tar.gz /jenkins_data --exclude=/jenkins_data/workspace >> /var/log/jenkins-backup.log 2>&1"
+    job: "#sudo docker run --rm --volume jenkins_jenkins-data:/jenkins_data --volume /var/backups/jenkins:/backup ubuntu tar cvzf /backup/backup-$(date +%Y-%m-%d-%H%M%S).tar.gz /jenkins_data --exclude=/jenkins_data/workspace >> /var/log/jenkins-backup.log 2>&1"
