@@ -5,10 +5,20 @@
 - name: Creates backup directory
   file: path=/var/backups/jenkins state=directory
 
+- name: AWS dir exists
+  file: path="~/.aws" state=directory
+
 - name: Copy configs 
   copy: src="{{item}}" dest="/var/jenkins/{{item}}"
   with_items:
     - docker-compose.yml
+
+- include_vars: vars/vars.yml
+
+- name: AWS create config
+  template:
+    src: aws_cli_config.j2
+    dest: "~/.aws/config"
 
 - name: Install dependencies
   apt: 
@@ -28,7 +38,7 @@
     name: postfix
     state: started
     
-- name: Upgrade latest pip, setuptools, docker-py and docker-compose with pip
+- name: Upgrade latest pip, setuptools, docker-compose and awscli with pip
   pip:
     name={{ item }}
     state=latest
@@ -36,6 +46,7 @@
     - pip
     - setuptools
     - docker-compose
+    - awscli
 
 - name: Add docker apt repo
   apt_repository:
