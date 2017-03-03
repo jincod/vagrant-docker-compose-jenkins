@@ -95,6 +95,7 @@
 - name: Schedule backup
   cron:
     name: "backup"
-    minute: "0"
-    hour: "0"
-    job: "#sudo docker run --rm --volume jenkins_jenkins-data:/jenkins_data --volume /var/backups/jenkins:/backup ubuntu tar cvzf /backup/backup-$(date +%Y-%m-%d-%H%M%S).tar.gz /jenkins_data --exclude=/jenkins_data/workspace >> /var/log/jenkins-backup.log 2>&1"
+    weekday: 0
+    minute: 0
+    hour: 0
+    job: "#sudo /var/jenkins/backup.sh >> /var/log/jenkins-backup.log 2>&1"
