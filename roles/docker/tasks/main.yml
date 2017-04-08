@@ -31,13 +31,7 @@
     - apparmor
     - python-dev
     - python-pip
-    - postfix
 
-- name: Start postfix
-  service:
-    name: postfix
-    state: started
-    
 - name: Upgrade latest pip, setuptools, docker-compose and awscli with pip
   pip:
     name={{ item }}
@@ -76,7 +70,6 @@
 - name: "docker network create"
   command: "docker network create proxy-network"
   when: isCreatedNetwork is defined and isCreatedNetwork.stdout == ""
-
 
 - name: "docker-compose up"
   command: "docker-compose up -d"
