@@ -4,4 +4,5 @@
   user: vagrant
   become: true
   roles:
-    - role: docker
+    - angstwad.docker_ubuntu
+    - jenkins
